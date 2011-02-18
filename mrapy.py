@@ -90,14 +90,7 @@ class Mrapy():
 			params.update({ 'session_key': self.session_key })
 
 		params.update( m_params )
-
-		sig = self.sign( params )
-
-
-		url = ""
-		for k in params:
-			url = url + k + '=' + str(params[k]) + '&'
-		url = url + 'sig=' + sig
+		url = "&".join(k + "=" + str(params[k]) for k in params.keys()) + '&sig=' + self.sign( params )
 
 		conn = httplib.HTTPConnection( self._apihost )
 		conn.request( 'POST', self._apiurl, url )
