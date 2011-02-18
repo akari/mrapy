@@ -32,10 +32,6 @@ except ImportError:
 		_jloads = lambda s: simplejson.loads(s)
 
 def get_uid_by_email( email = None ):
-	"""	
-		Take email as required argument and don't handles any exceptions in case of wrong or missing email.\n
-		Return u'<UID>'.
-	"""
 	email, domain = email.split('@')
 	conn = httplib.HTTPConnection( 'www.appsmail.ru' )
 	conn.request( 'GET', '/platform/%s/%s' % (domain.split('.')[0], email, ) )
