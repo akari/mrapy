@@ -41,8 +41,12 @@ def get_uid_by_email( email = None ):
 	conn.request( 'GET', '/platform/%s/%s' % (domain.split('.')[0], email, ) )
 	req = conn.getresponse()
 	if req.status != 200:
-		raise httplib.HTTPException
-	return _jloads( req.read() )['uid']
+		raise MrapyError( req.status, '-1', 'Can\'t connect to API host.' )
+	try:
+		_uid_data = _jloads( req.read() )['uid']
+	except:
+		raise MrapyError( req.status, '-1', 'Can\'t parse loaded json (maybe wrong user email?)' )
+	return _uid_data
 
 class MrapyError( Exception ):
 	def __init__( self, status, code, msg ):
