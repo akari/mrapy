@@ -102,7 +102,5 @@ class Mrapy():
 		conn = httplib.HTTPConnection( self._apihost )
 		conn.request( 'POST', self._apiurl, url )
 		req = conn.getresponse()
-		if req.status != 200:
-			print "URL: http://%s%s?%s" % ( self._apihost, self._apiurl, url )
 		return _jloads( req.read() )
 
