@@ -44,6 +44,12 @@ def get_uid_by_email( email = None ):
 		raise httplib.HTTPException
 	return _jloads( req.read() )['uid']
 
+class MrapyError( Exception ):
+	def __init__( self, status, code, msg ):
+		self.code = self.code, self.msg = ( code, msg )
+		Exception.__init__( self )
+	def __str__( self ):
+		return "Error( code = '%s', message = '%s' )" % ( self.code, self.msg, )
 
 class Mrapy():
 	def __init__( self, app_id, session_key=None, uid=None, secret_key=None, setXML = False ):
@@ -95,5 +101,12 @@ class Mrapy():
 		conn = httplib.HTTPConnection( self._apihost )
 		conn.request( 'POST', self._apiurl, url )
 		req = conn.getresponse()
+		if req.status != 200:
+			try:
+				_error_data = _jloads( req.read() )
+			except:
+				raise MrapyError( req.status, '-1', 'No parsable json returned from api call (network problem or so).' )
+			raise MrapyError( req.status, _error_data['error']['error_code'], _error_data['error']['error_msg'] )
+
 		return _jloads( req.read() )
 
